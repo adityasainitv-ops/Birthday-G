@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12 Days of YOU! | Birthday Countdown</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5c3e6, #c8b4ff, #a2d2ff);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            background: 
+                /* Light overlay - shows photo clearly */
+                linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.5)),
+                url('https://i.postimg.cc/JhMzwXZs/C33D1457-FCBD-4B29-865E-9A3DAAD79F40.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+            border: 5px solid rgba(255, 255, 255, 0.6);
+        }
+
+        h1 {
+            color: #d1477c;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2),
+                         0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #4c51bf;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.15),
+                         0 0 15px rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: linear-gradient(135deg, #ff9ec0, #ff6b9d);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .countdown-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 900px) {
+            .calendar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calendar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .day-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .day-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .day-card.unlocked {
+            background: linear-gradient(135deg, #ffd6e7, #ffffff);
+            border: 3px solid #ff9ec0;
+        }
+
+        .day-card.locked {
+            background: rgba(255, 255, 255, 0.6);
+            color: #aaa;
+        }
+
+        .day-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff6b9d;
+            margin-bottom: 10px;
+        }
+
+        .day-title {
+            font-size: 1.2rem;
+            color: #5a67d8;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .day-message {
+            font-size: 0.9rem;
+            color: #666;
+            display: none;
+        }
+
+        .day-card.unlocked .day-message {
+            display: block;
+        }
+
+        .lock-icon {
+            font-size: 2rem;
+            color: #ccc;
+            margin: 15px 0;
+        }
+
+        .unlock-icon {
+            font-size: 2rem;
+            color: #ff6b9d;
+            margin: 15px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .surprise-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .surprise-content.active {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .surprise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #ff9ec0;
+            padding-bottom: 15px;
+        }
+
+        .close-btn {
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .photo-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            height: 250px;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .word-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .word {
+            background: linear-gradient(135deg, #a2d2ff, #c8b4ff);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .word:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .spotify-player {
+            background: #1DB954;
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(29, 185, 84, 0.3);
+        }
+
+        .play-btn {
+            background: white;
+            color: #1DB954;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin: 20px 0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .final-message {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            border-left: 5px solid #ff6b9d;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .heart {
+            color: #ff6b9d;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            5% { transform: scale(1.1); }
+            10% { transform: scale(1); }
+            15% { transform: scale(1.1); }
+            20% { transform: scale(1); }
+        }
+
+        .birthday-banner {
+            background: linear-gradient(135deg, #ff9ec0, #c8b4ff, #a2d2ff);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 30px 0;
+            display: none;
+        }
+
+        .birthday-banner.active {
+            display: block;
+            animation: confetti 2s ease;
+        }
+
+        .bday-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .bday-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>12 Days of YOU! <i class="fas fa-birthday-cake"></i></h1>
+            <p class="subtitle">A countdown to the most amazing birthday or to the date to get blocked??</p>
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days-left">12</div>
+                    <div class="countdown-label">Days Left</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number">17</div>
+                    <div class="countdown-label">February</div>
+                </div>
+            </div>
+            <p>Click on each day to reveal a special surprise!and send me snap so see u are somewhat grateful or not 🙇‍♀️</p>
+        </header>
+
+        <div class="calendar" id="calendar">
+            <!-- Days will be generated by JavaScript -->
+        </div>
+
+        <div class="surprise-content" id="surprise-content">
+            <div class="surprise-header">
+                <h2 id="surprise-title">Day 1 Surprise</h2>
+                <button class="close-btn" id="close-surprise">&times;</button>
+            </div>
+            <div id="surprise-body">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+
+        <div class="birthday-banner" id="birthday-banner">
+            <h1 class="bday-title">HAPPY BIRTHDAY! <i class="fas fa-birthday-cake"></i></h1>
+            <p class="bday-subtitle">Welcome to your special day! <span class="emoji">🎉</span></p>
+            <p>Click below to explore your personalized birthday page!</p>
+            <button class="play-btn" id="open-birthday-page">
+                <i class="fas fa-star"></i> Open Birthday Surprise
+            </button>
+        </div>
+
+        <div class="surprise-content" id="birthday-content">
+            <div class="surprise-header">
+                <h2>Happy Birthday! <i class="fas fa-heart heart"></i></h2>
+                <button class="close-btn" id="close-birthday">&times;</button>
+            </div>
+            <div id="birthday-body">
+                <!-- Birthday content will be loaded here -->
+            </div>
+        </div>
+
+        <footer>
+            <p>Made with <i class="fas fa-heart heart"></i> by your headache hehe</p>
+            <p>Every day is a new celebration of YOU!</p>
+        </footer>
+    </div>
+
+    <script>
+     // ===========================================
+// AUTOMATIC UPDATES - NO DAILY EDITING NEEDED!
+// ===========================================
+const today = new Date(); // Current date when she opens
+const birthday = new Date('2026-02-17'); // Her birthday in 2026
+const startDate = new Date('2026-02-05'); // When countdown started in 2026
+
+// Calculate progress - FIXED
+const daysSinceStart = Math.floor((today - startDate) / (1000 * 3600 * 24));
+let currentDay = 0;
+if (daysSinceStart >= 0) {
+    currentDay = Math.min(daysSinceStart + 1, 12);
+} else {
+    currentDay = 0; // Before start date = no days unlocked
+}
+
+// Days until birthday
+let daysUntilBirthday = Math.ceil((birthday - today) / (1000 * 3600 * 24));
+if (daysUntilBirthday < 0) daysUntilBirthday = 0;
+// Update countdown
+document.getElementById('days-left').textContent = daysUntilBirthday;
+
+// Is it birthday?
+const isBirthday = today.getDate() === birthday.getDate() && 
+                  today.getMonth() === birthday.getMonth() &&
+                  today.getFullYear() === birthday.getFullYear();
+        const dayData = [
+            { day: 1, date: "Feb 5", title: "Why You're Amazing", message: "No long statements I know you will be busy just want to say you are a box full of infinite positive vibes", photo: "https://i.postimg.cc/vB5BSycK/IMG-1122.png" },
+            { day: 2, date: "Feb 6", title: "Strength You Show", message: "You have the ability to conquer the World gaand faad do g success ke sath sbhi ki hehe", photo: "https://i.postimg.cc/Prw63F4p/IMG-1123.png" },
+            { day: 3, date: "Feb 7", title: "Smile You Bring", message: "Your smile is out of the league but this one is for me you are the #1 reason because of which i cry and smile both you know well i guess??", photo: "https://i.postimg.cc/gkWM7HB1/image.jpg" },
+            { day: 4, date: "Feb 8", title: "Heart of Diamond", message: "Maybe you are rude and arrogant to me but you surely have a heart of diamond fs...", photo: "https://i.postimg.cc/W1Qq9X5J/image1.jpg" },
+            { day: 5, date: "Feb 9", title: "Dreams You Chase", message: "Sab hojayega bhai jo socha hai tunne never worry about your future humlog hai dekhlege even if dgaf about me..", photo: "https://i.postimg.cc/2jKkF3cB/image2.jpg" },
+            { day: 6, date: "Feb 10", title: "Creative Soul", message: "Your creativity inspires me every day. The world is brighter with your art in it.", photo: "https://i.postimg.cc/GpfRP5Kf/image.jpg" },
+            { day: 7, date: "Feb 11", title: "Unbreakable one sided Bond", message: "Through ups and downs, our relation might be only growing stronger. Thank you for always being there.", photo: "https://i.postimg.cc/25sJSR2D/image.jpg" },
+            { day: 8, date: "Feb 12", title: "Best Goddess maybe hehe??", message: "I don't even know what is this but yes you mean so much to me someone whom can i worship to JKJK.", photo: "https://i.postimg.cc/CKsDzb4K/image.jpg" },
+            { day: 9, date: "Feb 13", title: "Bhalwaan", message: "When things get tough, you're the light that guides the way. You're stronger than you know.", photo: "https://i.postimg.cc/BQyvspdb/image.jpg" },
+            { day: 10, date: "Feb 14", title: "Valentine??", message: "On a day about love, I want you to know how much I love our friendship. It's my favorite love story. Dekh ikathe sundar bhi lgte haha", photo: "https://i.postimg.cc/HWFx13qS/image.jpg" },
+            { day: 11, date: "Feb 15", title: "The Countdown", message: "Just one more day! I'm so excited to celebrate you and all the amazing things you are.", photo: "https://i.postimg.cc/28fDxJRZ/IMG-1127.png" },
+            { day: 12, date: "Feb 16", title: "Birthday Eve", message: "The day before the best day! Get ready for an amazing year ahead. You deserve the world.Hn pichli bar to kuch bhi na thaa iss baar ka dekhr block mt krdena pls luv u didu g", photo: "https://i.postimg.cc/P5gzLmv3/image.jpg" }
+        ];
+        
+        // Words that describe her (for birthday page)
+        const describingWords = [
+            "Amazing", "Kind", "Arrogant", "Rude", "Creative", "Smart", 
+            "Beautiful", "Thoughtful", "Adventurous", "Bhalwaan", "Inspiring",
+            "Dominant hehe", "Genuine", "Brave", "Unique", "Wonderful", "Adorable"
+        ];
+        
+        // Birthday photos (replace with actual photos of her)
+        const birthdayPhotos = [
+            "https://i.postimg.cc/m2RQGLWP/im6age.jpg",
+            "https://i.postimg.cc/J0QHhXVS/image.jpg",
+            "https://i.postimg.cc/43M6CpXk/im3age.jpg"
+        ];
+        
+        // Spotify playlist ID (replace with your actual playlist ID)
+        const spotifyPlaylistId = "5tPQHq1AoE4HxtLULl0cr4"; // Sample playlist
+
+        // ===========================================
+        // GENERATE CALENDAR
+        // ===========================================
+        const calendar = document.getElementById('calendar');
+
+        dayData.forEach(day => {
+            const dayCard = document.createElement('div');
+            dayCard.className = 'day-card';
+            
+            // Check if day should be unlocked
+            const isUnlocked = day.day <= currentDay;
+            
+            if (isUnlocked) {
+                dayCard.classList.add('unlocked');
+                dayCard.innerHTML = `
+                    <div class="day-number">${day.day}</div>
+                    <div class="day-title">${day.title}</div>
+                    <div class="day-message">${day.message}</div>
+                    <div class="unlock-icon"><i class="fas fa-lock-open"></i></div>
+                `;
+                
+                dayCard.addEventListener('click', () => {
+                    openSurprise(day);
+                });
+            } else {
+                dayCard.classList.add('locked');
+                const daysToWait = day.day - currentDay;
+                dayCard.innerHTML = `
+                    <div class="day-number">${day.day}</div>
+                    <div class="day-title">${day.title}</div>
+                    <div class="lock-icon"><i class="fas fa-lock"></i></div>
+                    <p>Unlocks in ${daysToWait} day${daysToWait > 1 ? 's' : ''}</p>
+                `;
+            }
+            
+            calendar.appendChild(dayCard);
+        });
+
+        // Show birthday banner if it's birthday
+        if (isBirthday) {
+            document.getElementById('birthday-banner').classList.add('active');
+        }
+        
+        // ===========================================
+        // FUNCTIONS
+        // ===========================================
+        function openSurprise(day) {
+            document.getElementById('surprise-title').textContent = `Day ${day.day}: ${day.title}`;
+            
+            const surpriseBody = document.getElementById('surprise-body');
+            surpriseBody.innerHTML = `
+                <div class="final-message">${day.message}</div>
+                <div class="photo-gallery">
+                    <div class="photo-item">
+                        <img src="${day.photo}" alt="Day ${day.day} photo">
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #5a67d8; font-weight: 600;">
+                    <i class="fas fa-heart" style="color: #ff6b9d;"></i> Only ${12 - day.day} day(s) until your birthday! <i class="fas fa-heart" style="color: #ff6b9d;"></i>
+                </p>
+            `;
+            
+            document.getElementById('surprise-content').classList.add('active');
+        }
+
+        function openBirthdayPage() {
+            // Hide other content
+            document.getElementById('surprise-content').classList.remove('active');
+            document.getElementById('birthday-banner').classList.remove('active');
+            
+            // Build birthday page
+            const birthdayBody = document.getElementById('birthday-body');
+            
+            // Create photo gallery HTML
+            let photosHTML = '<div class="photo-gallery">';
+            birthdayPhotos.forEach(photo => {
+                photosHTML += `
+                    <div class="photo-item">
+                        <img src="${photo}" alt="Birthday photo">
+                    </div>
+                `;
+            });
+            photosHTML += '</div>';
+            
+            // Create word cloud HTML
+            let wordsHTML = '<div class="word-cloud">';
+            describingWords.forEach(word => {
+                // Random size for visual effect
+                const size = Math.floor(Math.random() * 5) + 14;
+                wordsHTML += `<div class="word" style="font-size: ${size}px;">${word}</div>`;
+            });
+            wordsHTML += '</div>';
+            
+            // Create Spotify player HTML
+            const spotifyHTML = `
+                <div class="spotify-player">
+                    <h3><i class="fab fa-spotify"></i> Your Birthday Playlist</h3>
+                    <p>A special mix of songs that remind me of you!</p>
+                    <button class="play-btn" id="play-music">
+                        <i class="fas fa-play"></i> Play Birthday Mix
+                    </button>
+                    <p><em>Click play to start the celebration!</em></p>
+                    <div id="player-container" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            // Final message
+            const finalMessage = `
+                <div class="final-message">
+                    <p>Happy Birthday to My OG Love You didi!❤️❤️</p>
+                    <p>On this special day, I want you to know how much you mean to me. You're not just my friend, you're family.</p>
+                    <p>Thank you for being you - for all the laughter, support, and unforgettable memories.</p>
+                    <p>I hope this year brings you everything you've been dreaming of and babaji make all your dreams come true.</p>
+                    <p style="font-size: 1.5rem; margin-top: 20px; color: #ff6b9d;">You are loved more than you know. <i class="fas fa-heart heart"></i></p>
+                </div>
+            `;
+            
+            // Combine all sections
+            birthdayBody.innerHTML = photosHTML + wordsHTML + spotifyHTML + finalMessage;
+            
+            // Show birthday content
+            document.getElementById('birthday-content').classList.add('active');
+            
+            // Add event listener for play button
+            document.getElementById('play-music')?.addEventListener('click', function() {
+                const playerContainer = document.getElementById('player-container');
+                playerContainer.innerHTML = `
+                    <iframe style="border-radius:12px; margin-top: 20px;" 
+                    src="https://open.spotify.com/embed/playlist/${spotifyPlaylistId}?utm_source=generator&theme=0" 
+                    width="100%" height="352" frameBorder="0" allowfullscreen="" 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy"></iframe>
+                `;
+                this.style.display = 'none';
+            });
+        }
+        
+        // ===========================================
+        // EVENT LISTENERS
+        // ===========================================
+        document.getElementById('close-surprise').addEventListener('click', function() {
+            document.getElementById('surprise-content').classList.remove('active');
+        });
+        
+        document.getElementById('close-birthday').addEventListener('click', function() {
+            document.getElementById('birthday-content').classList.remove('active');
+        });
+        
+        document.getElementById('open-birthday-page').addEventListener('click', openBirthdayPage);
+        
+        // If it's the birthday, automatically show the birthday banner
+        if (isBirthday) {
+            // After 3 seconds, automatically open the birthday page
+            setTimeout(openBirthdayPage, 3000);
+        }
+    </script>
+</body>
+</html>
